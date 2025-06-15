@@ -184,7 +184,10 @@ class Consulta extends Model
         ]);
     }
 
-    public function scopeEstesMes($query)
+    /**
+     * Scope a query to only include consultations from the current month.
+     */
+    public function scopeEsteMes($query)
     {
         return $query->whereMonth('fecha_hora', now()->month)
                     ->whereYear('fecha_hora', now()->year);
