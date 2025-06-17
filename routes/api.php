@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\V1\PacienteController;
 use App\Http\Controllers\Api\V1\ConsultaController;
 use App\Http\Controllers\Api\V1\FormulaController;
 use App\Http\Controllers\Api\V1\FacturaController;
+use App\Http\Controllers\Api\V1\VeterinarioController;
+use App\Http\Controllers\Api\V1\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +40,30 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             'laravel_version' => app()->version()
         ]);
     })->name('test.public');
+
+      // RUTAS DE AUTENTICACIÓN (Sin middleware de autenticación)
+      Route::prefix('auth')->name('auth.')->group(function () {
+        Route::post('/register', [AuthController::class, 'register'])->name('register');
+        Route::post('/login', [AuthController::class, 'login'])->name('login');
+    });
+
+    // Route::prefix('propietarios')->name('propietarios.')->group(function () {
+    //     Route::get('/', [PropietarioController::class, 'index'])->name('index');
+    //     Route::post('/', [PropietarioController::class, 'store'])->name('store');
+    //     Route::get('/buscar', [PropietarioController::class, 'buscar'])->name('buscar');
+    //     Route::get('/{propietario}', [PropietarioController::class, 'show'])->name('show');
+    //     Route::put('/{propietario}', [PropietarioController::class, 'update'])->name('update');
+    //     Route::delete('/{propietario}', [PropietarioController::class, 'destroy'])->name('destroy');
+    // });
+
+    // Route::prefix('pacientes')->name('pacientes.')->group(function () {
+    //     Route::get('/', [PacienteController::class, 'index'])->name('index');
+    //     Route::post('/', [PacienteController::class, 'store'])->name('store');
+    //     Route::get('/{paciente}', [PacienteController::class, 'show'])->name('show');
+    //     Route::put('/{paciente}', [PacienteController::class, 'update'])->name('update');
+    //     Route::delete('/{paciente}', [PacienteController::class, 'destroy'])->name('destroy');
+    //     Route::get('/{paciente}/historial', [PacienteController::class, 'historial'])->name('historial');
+    // });
     
     // ✅ RUTAS AUTENTICADAS
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -49,7 +76,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::post('/validation', [TestApiController::class, 'testValidation'])->name('validation');
         });
 
-        // RUTAS DE PROPIETARIOS
+        Route::prefix('auth')->name('auth.')->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+            Route::get('/me', [AuthController::class, 'me'])->name('me');
+            Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
+        });
+
+        RUTAS DE PROPIETARIOS
         Route::prefix('propietarios')->name('propietarios.')->group(function () {
             Route::get('/', [PropietarioController::class, 'index'])->name('index');
             Route::post('/', [PropietarioController::class, 'store'])->name('store');
@@ -59,7 +92,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::delete('/{propietario}', [PropietarioController::class, 'destroy'])->name('destroy');
         });
 
-        // RUTAS DE PACIENTES
+        RUTAS DE PACIENTES
         Route::prefix('pacientes')->name('pacientes.')->group(function () {
             Route::get('/', [PacienteController::class, 'index'])->name('index');
             Route::post('/', [PacienteController::class, 'store'])->name('store');
@@ -109,6 +142,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::put('/{factura}', [FacturaController::class, 'update'])->name('update');
             Route::post('/{factura}/pago', [FacturaController::class, 'procesarPago'])->name('pago');
             Route::get('/{factura}/pdf', [FacturaController::class, 'generarPDF'])->name('pdf');
+        });
+
+        Route::prefix('veterinarios')->name('veterinarios.')->group(function () {
+            Route::get('/', [VeterinarioController::class, 'index'])->name('index');
+            Route::post('/', [VeterinarioController::class, 'store'])->name('store');
+            Route::get('/{veterinario}', [VeterinarioController::class, 'show'])->name('show');
+            Route::put('/{veterinario}', [VeterinarioController::class, 'update'])->name('update');
+            Route::delete('/{veterinario}', [VeterinarioController::class, 'destroy'])->name('destroy');
+            Route::get('/{veterinario}/citas', [VeterinarioController::class, 'citas'])->name('citas');
+            Route::get('/{veterinario}/propietarios-preferidos', [VeterinarioController::class, 'propietariosPreferidos'])->name('propietarios-preferidos');
         });
         
         // RUTAS CON MIDDLEWARE DE ROLES
